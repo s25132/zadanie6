@@ -1,7 +1,10 @@
-﻿namespace PrescriptionApp.Model
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace PrescriptionApp.Model
 {
     public class Prescription
     {
+        [Key]
         public int IdPrescription { get; set; }
         public DateTime Date { get; set; }
         public DateTime DueDate { get; set; }

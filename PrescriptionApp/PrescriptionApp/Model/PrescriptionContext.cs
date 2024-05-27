@@ -9,6 +9,16 @@ namespace PrescriptionApp.Model
         public DbSet<Prescription> Prescriptions { get; set; }
         public DbSet<PrescriptionMedicament> PrescriptionMedicaments { get; set; }
 
+
+        public PrescriptionContext()
+        {
+        }
+
+        public PrescriptionContext(DbContextOptions<PrescriptionContext> options)
+            : base(options)
+        {
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<PrescriptionMedicament>()
