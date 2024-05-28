@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PrescriptionApp.Model;
 
@@ -11,9 +12,11 @@ using PrescriptionApp.Model;
 namespace PrescriptionApp.Migrations
 {
     [DbContext(typeof(PrescriptionContext))]
-    partial class PrescriptionContextModelSnapshot : ModelSnapshot
+    [Migration("20240528082208_fix1")]
+    partial class fix1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -47,7 +50,7 @@ namespace PrescriptionApp.Migrations
 
                     b.HasKey("IdDoctor");
 
-                    b.ToTable("Doctor", (string)null);
+                    b.ToTable("Doctors");
                 });
 
             modelBuilder.Entity("PrescriptionApp.Model.Medicament", b =>
@@ -75,7 +78,7 @@ namespace PrescriptionApp.Migrations
 
                     b.HasKey("IdMedicament");
 
-                    b.ToTable("Medicament", (string)null);
+                    b.ToTable("Medicaments");
                 });
 
             modelBuilder.Entity("PrescriptionApp.Model.Patient", b =>
@@ -101,7 +104,7 @@ namespace PrescriptionApp.Migrations
 
                     b.HasKey("IdPatient");
 
-                    b.ToTable("Patient", (string)null);
+                    b.ToTable("Patients");
                 });
 
             modelBuilder.Entity("PrescriptionApp.Model.Prescription", b =>
@@ -115,6 +118,9 @@ namespace PrescriptionApp.Migrations
                     b.Property<DateTime?>("Date")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("DoctorIdDoctor")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("DueDate")
                         .HasColumnType("datetime2");
 
@@ -124,21 +130,24 @@ namespace PrescriptionApp.Migrations
                     b.Property<int>("IdPatient")
                         .HasColumnType("int");
 
+                    b.Property<int>("PatientIdPatient")
+                        .HasColumnType("int");
+
                     b.HasKey("IdPrescription");
 
-                    b.HasIndex("IdDoctor");
+                    b.HasIndex("DoctorIdDoctor");
 
-                    b.HasIndex("IdPatient");
+                    b.HasIndex("PatientIdPatient");
 
-                    b.ToTable("Prescription", (string)null);
+                    b.ToTable("Prescriptions");
                 });
 
             modelBuilder.Entity("PrescriptionApp.Model.PrescriptionMedicament", b =>
                 {
-                    b.Property<int>("IdMedicament")
+                    b.Property<int>("IdPrescription")
                         .HasColumnType("int");
 
-                    b.Property<int>("IdPrescription")
+                    b.Property<int>("IdMedicament")
                         .HasColumnType("int");
 
                     b.Property<string>("Detalis")
@@ -149,24 +158,32 @@ namespace PrescriptionApp.Migrations
                     b.Property<int>("Dose")
                         .HasColumnType("int");
 
-                    b.HasKey("IdMedicament", "IdPrescription");
+                    b.Property<int>("MedicamentIdMedicament")
+                        .HasColumnType("int");
 
-                    b.HasIndex("IdPrescription");
+                    b.Property<int>("PrescriptionIdPrescription")
+                        .HasColumnType("int");
 
-                    b.ToTable("PrescriptionMedicament", (string)null);
+                    b.HasKey("IdPrescription", "IdMedicament");
+
+                    b.HasIndex("MedicamentIdMedicament");
+
+                    b.HasIndex("PrescriptionIdPrescription");
+
+                    b.ToTable("PrescriptionMedicaments");
                 });
 
             modelBuilder.Entity("PrescriptionApp.Model.Prescription", b =>
                 {
                     b.HasOne("PrescriptionApp.Model.Doctor", "Doctor")
                         .WithMany("Prescriptions")
-                        .HasForeignKey("IdDoctor")
+                        .HasForeignKey("DoctorIdDoctor")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("PrescriptionApp.Model.Patient", "Patient")
                         .WithMany("Prescriptions")
-                        .HasForeignKey("IdPatient")
+                        .HasForeignKey("PatientIdPatient")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -179,13 +196,13 @@ namespace PrescriptionApp.Migrations
                 {
                     b.HasOne("PrescriptionApp.Model.Medicament", "Medicament")
                         .WithMany("PrescriptionMedicaments")
-                        .HasForeignKey("IdMedicament")
+                        .HasForeignKey("MedicamentIdMedicament")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("PrescriptionApp.Model.Prescription", "Prescription")
                         .WithMany("PrescriptionMedicaments")
-                        .HasForeignKey("IdPrescription")
+                        .HasForeignKey("PrescriptionIdPrescription")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

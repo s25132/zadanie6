@@ -2,16 +2,15 @@
 
 namespace PrescriptionApp.Model
 {
-    public class Patient
+    public class DoctorDto
     {
-        [Key]
-        public int IdPatient { get; set; }
+        [Required]
+        public int IdDoctor { get; set; }
+        [Required]
         [MaxLength(100)]
         public string FirstName { get; set; }
+        [Required]
         [MaxLength(100)]
         public string LastName { get; set; }
-        public DateTime? Birthdate { get; set; }
-
-        public ICollection<Prescription> Prescriptions { get; set; }
     }
 }

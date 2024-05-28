@@ -18,21 +18,74 @@ namespace PrescriptionApp.Model
             : base(options)
         {
         }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<PrescriptionMedicament>()
-                .HasKey(pm => new { pm.IdPrescription, pm.IdMedicament });
+            base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<PrescriptionMedicament>()
-                .HasOne(pm => pm.Prescription)
-                .WithMany(p => p.PrescriptionMedicaments)
-                .HasForeignKey(pm => pm.IdPrescription);
+            modelBuilder.Entity<Doctor>(entity =>
+            {
+                entity.HasKey(e => e.IdDoctor);
+                entity.Property(e => e.IdDoctor).ValueGeneratedOnAdd();
+                entity.Property(e => e.FirstName).IsRequired();
 
-            modelBuilder.Entity<PrescriptionMedicament>()
-                .HasOne(pm => pm.Medicament)
-                .WithMany(m => m.PrescriptionMedicaments)
-                .HasForeignKey(pm => pm.IdMedicament);
+                entity.ToTable("Doctor");
+
+                entity.HasMany(d => d.Prescriptions)
+                       .WithOne(p => p.Doctor)
+                       .HasForeignKey(p => p.IdDoctor)
+                       .IsRequired();
+            });
+
+            modelBuilder.Entity<Prescription>(entity =>
+            {
+                entity.HasKey(e => e.IdPrescription);
+                entity.Property(e => e.IdPrescription).ValueGeneratedOnAdd();
+                entity.ToTable("Prescription");
+
+                entity.HasMany(d => d.PrescriptionMedicaments)
+                       .WithOne(p => p.Prescription)
+                       .HasForeignKey(p => p.IdPrescription)
+                       .IsRequired();
+
+            });
+
+            modelBuilder.Entity<Patient>(entity =>
+            {
+                entity.HasKey(e => e.IdPatient);
+                entity.Property(e => e.IdPatient).ValueGeneratedOnAdd();
+                entity.Property(e => e.FirstName).IsRequired();
+                entity.ToTable("Patient");
+
+                entity.HasMany(d => d.Prescriptions)
+                       .WithOne(p => p.Patient)
+                       .HasForeignKey(p => p.IdPatient)
+                       .IsRequired();
+
+            });
+
+            modelBuilder.Entity<Medicament>(entity =>
+            {
+                entity.HasKey(e => e.IdMedicament);
+                entity.Property(e => e.IdMedicament).ValueGeneratedOnAdd();
+                entity.Property(e => e.Name).IsRequired();
+                entity.ToTable("Medicament");
+
+                entity.HasMany(d => d.PrescriptionMedicaments)
+                       .WithOne(p => p.Medicament)
+                       .HasForeignKey(p => p.IdMedicament)
+                       .IsRequired();
+
+
+            });
+
+            modelBuilder.Entity<PrescriptionMedicament>(entity =>
+            {
+                entity.HasKey(e => new { e.IdMedicament, e.IdPrescription });
+                entity.Property(e => e.Dose).IsRequired();
+                entity.ToTable("PrescriptionMedicament");
+
+            });
+
         }
     }
 }
